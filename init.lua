@@ -121,6 +121,17 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- Auto-save when leaving a buffer
+vim.api.nvim_create_autocmd('BufLeave', {
+  desc = 'Auto-save on buffer leave',
+  group = vim.api.nvim_create_augroup('auto-save', { clear = true }),
+  callback = function()
+    if vim.bo.modified and vim.bo.buftype == '' then
+      vim.cmd 'silent! write'
+    end
+  end,
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
