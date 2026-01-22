@@ -41,7 +41,7 @@ vim.g.have_nerd_font = true
 
 -- Only show line number on current line
 vim.o.number = true
-vim.o.statuscolumn = '%{v:relnum == 0 ? v:lnum : ""}'
+vim.o.statuscolumn = '%s%{v:relnum == 0 ? v:lnum : ""}'
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
@@ -171,6 +171,7 @@ require('lazy').setup({
         topdelete = { text = '‾' },
         changedelete = { text = '~' },
       },
+      signcolumn = true,
     },
   },
   { -- Useful plugin to show you pending keybinds.
