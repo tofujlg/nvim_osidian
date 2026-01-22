@@ -20,6 +20,9 @@ return {
       folder = 'Journals',
       date_format = '%Y%m%d',
     },
+    templates = {
+      folder = 'Templater',
+    },
   },
   config = function(_, opts)
     require('obsidian').setup(opts)
