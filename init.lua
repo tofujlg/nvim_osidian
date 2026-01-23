@@ -608,16 +608,13 @@ require('lazy').setup({
     },
   },
 
-  { -- Catppuccin colorscheme
-    'catppuccin/nvim',
-    name = 'catppuccin',
+  { -- Atlas colorscheme
+    'huyvohcmc/atlas.vim',
     priority = 1000,
     config = function()
-      require('catppuccin').setup {
-        flavour = 'mocha', -- latte, frappe, macchiato, mocha
-        no_italic = true,
-      }
-      vim.cmd.colorscheme 'catppuccin'
+      vim.cmd.colorscheme 'atlas'
+      -- Set link color to cyan to match atlas URL style
+      vim.api.nvim_set_hl(0, 'Underlined', { fg = '#5fd7ff', underline = true })
     end,
   },
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },

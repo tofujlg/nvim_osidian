@@ -10,6 +10,12 @@ return {
   ---@type obsidian.config
   opts = {
     legacy_commands = false, -- this will be removed in the next major release
+    ui = {
+      hl_groups = {
+        ObsidianRefText = { underline = true, fg = '#7c9aa0' },
+        ObsidianExtLinkIcon = { fg = '#7c9aa0' },
+      },
+    },
     workspaces = {
       {
         name = 'main',
