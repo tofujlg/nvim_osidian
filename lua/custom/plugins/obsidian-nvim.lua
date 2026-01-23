@@ -20,9 +20,17 @@ return {
       folder = 'Journals',
       date_format = '%Y%m%d',
     },
+    weekly_notes = {
+      folder = 'Journals/Weekly notes',
+      date_format = 'Week-%W-%Y',
+    },
     templates = {
       folder = 'Templater',
     },
+    -- Use the note title as the filename instead of random ID
+    note_id_func = function(title)
+      return title
+    end,
   },
   config = function(_, opts)
     require('obsidian').setup(opts)
@@ -139,6 +147,13 @@ return {
         :find()
     end
 
+    -- Open weekly note
+    local function open_weekly_note()
+      local filename = os.date 'Week-%W-%Y'
+      local filepath = vault_path .. 'Journals/Weekly notes/' .. filename .. '.md'
+      vim.cmd('edit ' .. vim.fn.fnameescape(filepath))
+    end
+
     -- Insert link to today's daily note
     local function insert_today_link()
       local date_link = os.date '%Y%m%d'
@@ -150,6 +165,7 @@ return {
     -- Set up keymaps
     vim.keymap.set('n', '<leader> ', search_by_alias, { desc = 'Search Obsidian (Alias & Filename)' })
     vim.keymap.set('n', '<leader>od', '<cmd>Obsidian today<cr>', { desc = '[O]bsidian [D]aily note (today)' })
+    vim.keymap.set('n', '<leader>ow', open_weekly_note, { desc = '[O]bsidian [W]eekly note' })
     vim.keymap.set('n', '<leader>ot', insert_today_link, { desc = '[O]bsidian insert [T]oday link' })
   end,
 }
