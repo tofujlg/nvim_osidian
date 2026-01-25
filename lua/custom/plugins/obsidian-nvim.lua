@@ -16,6 +16,9 @@ return {
         ObsidianExtLinkIcon = { fg = '#7c9aa0' },
       },
     },
+    frontmatter = {
+      enabled = false,
+    },
     workspaces = {
       {
         name = 'main',
