@@ -53,6 +53,7 @@ end)
 
 vim.o.breakindent = true
 vim.o.undofile = true
+vim.o.swapfile = false
 
 vim.o.ignorecase = true
 vim.o.smartcase = true
