@@ -609,15 +609,22 @@ require('lazy').setup({
     },
   },
 
-  { -- Atlas colorscheme
-    'huyvohcmc/atlas.vim',
+  -- Colorscheme options (uncomment one at a time)
+  {
+    'danishprakash/vim-yami',
     priority = 1000,
     config = function()
-      vim.cmd.colorscheme 'atlas'
-      -- Set link color to cyan to match atlas URL style
-      vim.api.nvim_set_hl(0, 'Underlined', { fg = '#5fd7ff', underline = true })
+      vim.cmd.colorscheme 'yami'
     end,
   },
+  -- {
+  --   'huyvohcmc/atlas.vim',
+  --   priority = 1000,
+  --   config = function()
+  --     vim.cmd.colorscheme 'atlas'
+  --   end,
+  -- },
+  -- { 'vague-theme/vague.nvim', priority = 1000, config = function() require('vague').setup {} vim.cmd.colorscheme 'vague' end },
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
