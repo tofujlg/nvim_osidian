@@ -611,12 +611,21 @@ require('lazy').setup({
 
   -- Colorscheme options (uncomment one at a time)
   {
-    'pgdouyon/vim-yin-yang',
+    'jaredgorski/Mies.vim',
     priority = 1000,
     config = function()
-      vim.cmd.colorscheme 'yin' -- or 'yang' for light theme
+      vim.cmd.colorscheme 'mies'
+      vim.api.nvim_set_hl(0, 'LineNr', { bg = 'NONE' })
+      vim.api.nvim_set_hl(0, 'SignColumn', { bg = 'NONE' })
     end,
   },
+  -- {
+  --   'pgdouyon/vim-yin-yang',
+  --   priority = 1000,
+  --   config = function()
+  --     vim.cmd.colorscheme 'yin' -- or 'yang' for light theme
+  --   end,
+  -- },
   -- {
   --   'danishprakash/vim-yami',
   --   priority = 1000,
