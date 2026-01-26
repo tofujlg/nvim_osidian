@@ -611,12 +611,19 @@ require('lazy').setup({
 
   -- Colorscheme options (uncomment one at a time)
   {
-    'danishprakash/vim-yami',
+    'pgdouyon/vim-yin-yang',
     priority = 1000,
     config = function()
-      vim.cmd.colorscheme 'yami'
+      vim.cmd.colorscheme 'yin' -- or 'yang' for light theme
     end,
   },
+  -- {
+  --   'danishprakash/vim-yami',
+  --   priority = 1000,
+  --   config = function()
+  --     vim.cmd.colorscheme 'yami'
+  --   end,
+  -- },
   -- {
   --   'huyvohcmc/atlas.vim',
   --   priority = 1000,
