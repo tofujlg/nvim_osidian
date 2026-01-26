@@ -31,7 +31,7 @@ return {
     },
     weekly_notes = {
       folder = 'Journals/Weekly notes',
-      date_format = 'Week-%W-%Y',
+      date_format = 'Week-%V-%Y',
     },
     templates = {
       folder = 'Templater',
@@ -158,7 +158,7 @@ return {
 
     -- Open weekly note
     local function open_weekly_note()
-      local filename = os.date 'Week-%W-%Y'
+      local filename = os.date 'Week-%V-%Y'
       local filepath = vault_path .. 'Journals/Weekly notes/' .. filename .. '.md'
       vim.cmd('edit ' .. vim.fn.fnameescape(filepath))
     end
