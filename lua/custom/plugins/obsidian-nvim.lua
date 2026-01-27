@@ -10,6 +10,10 @@ return {
   ---@type obsidian.config
   opts = {
     legacy_commands = false, -- this will be removed in the next major release
+    completion = {
+      blink = true,
+      min_chars = 2,
+    },
     ui = {
       hl_groups = {
         ObsidianRefText = { underline = true, fg = '#7c9aa0' },
@@ -28,6 +32,7 @@ return {
     daily_notes = {
       folder = 'Journals',
       date_format = '%Y%m%d',
+      template = 'Journal/Template_daily_note_nvim.md',
     },
     weekly_notes = {
       folder = 'Journals/Weekly notes',
@@ -35,6 +40,20 @@ return {
     },
     templates = {
       folder = 'Templater',
+      substitutions = {
+        yesterday = function()
+          return os.date('%Y%m%d', os.time() - 86400)
+        end,
+        tomorrow = function()
+          return os.date('%Y%m%d', os.time() + 86400)
+        end,
+        week_year = function()
+          return 'Week-' .. os.date('%V-%Y')
+        end,
+        month_year = function()
+          return os.date('%B-%Y')
+        end,
+      },
     },
     -- Use the note title as the filename instead of random ID
     note_id_func = function(title)
