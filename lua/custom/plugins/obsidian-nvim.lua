@@ -53,6 +53,15 @@ return {
         month_year = function()
           return os.date('%B-%Y')
         end,
+        date_iso = function()
+          return os.date('%Y-%m-%d')
+        end,
+        date_compact = function()
+          return os.date('%Y%m%d')
+        end,
+        date_slash = function()
+          return os.date('%Y/%m/%d')
+        end,
       },
     },
     -- Use the note title as the filename instead of random ID
