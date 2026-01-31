@@ -1,11 +1,35 @@
 return {
-  'obsidian-nvim/obsidian.nvim',
-  version = '*', -- use latest release, remove to use latest commit
-  ft = 'markdown',
-  dependencies = {
-    'nvim-lua/plenary.nvim',
-    'nvim-telescope/telescope.nvim',
+  {
+    'saghen/blink.cmp',
+    version = false,
+    dependencies = {
+      { 'rafamadriz/friendly-snippets' },
+    },
+    opts = {
+      keymap = { preset = 'enter' },
+      completion = { list = { selection = { preselect = true, auto_insert = true } } },
+      appearance = {
+        use_nvim_cmp_as_default = true,
+        nerd_font_variant = 'mono',
+      },
+      sources = {
+        default = { 'lsp', 'path', 'snippets', 'buffer' },
+        per_filetype = {
+          markdown = { inherit_defaults = true, 'obsidian', 'obsidian_new', 'obsidian_tags' },
+        },
+      },
+    },
+    opts_extend = { 'sources.default' },
   },
+  {
+    'obsidian-nvim/obsidian.nvim',
+    version = '*', -- use latest release, remove to use latest commit
+    ft = 'markdown',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-telescope/telescope.nvim',
+      'saghen/blink.cmp',
+    },
   ---@module 'obsidian'
   ---@type obsidian.config
   opts = {
@@ -154,6 +178,53 @@ return {
         end
       end
 
+      -- Custom sorter that prioritizes aliases over filenames
+      local sorters = require 'telescope.sorters'
+      local alias_priority_sorter = sorters.Sorter:new {
+        scoring_function = function(_, prompt, line, entry)
+          if prompt == '' or prompt == nil then
+            return 1
+          end
+
+          local prompt_lower = prompt:lower()
+          local value = entry.value
+          local is_alias = value.alias ~= nil
+
+          -- Check for exact match on alias
+          if is_alias and value.alias:lower() == prompt_lower then
+            return 0 -- Best possible score
+          end
+
+          -- Check for exact match on filename (but lower priority than alias)
+          if not is_alias and value.filename:lower() == prompt_lower then
+            return 0.5
+          end
+
+          -- Check for prefix match on alias
+          if is_alias and value.alias:lower():sub(1, #prompt_lower) == prompt_lower then
+            return 1
+          end
+
+          -- Check for prefix match on filename
+          if not is_alias and value.filename:lower():sub(1, #prompt_lower) == prompt_lower then
+            return 1.5
+          end
+
+          -- Check if alias contains the prompt
+          if is_alias and value.alias:lower():find(prompt_lower, 1, true) then
+            return 2
+          end
+
+          -- Check if filename contains the prompt
+          if value.filename:lower():find(prompt_lower, 1, true) then
+            return is_alias and 2.5 or 3
+          end
+
+          -- No match
+          return -1
+        end,
+      }
+
       pickers
         .new({}, {
           prompt_title = 'Search Obsidian (Alias & Filename)',
@@ -168,7 +239,7 @@ return {
               }
             end,
           },
-          sorter = conf.generic_sorter {},
+          sorter = alias_priority_sorter,
           previewer = conf.file_previewer {},
           attach_mappings = function(prompt_bufnr, map)
             actions.select_default:replace(function()
@@ -199,10 +270,28 @@ return {
       vim.api.nvim_put({ link }, 'c', true, true)
     end
 
+    -- Paste URL as markdown link (fetches page title)
+    local function paste_url_as_markdown_link()
+      local url = vim.fn.getreg '+'
+      if url:match '^https?://' then
+        local cmd = string.format("curl -sL '%s' | grep -oP '(?<=<title>).*(?=</title>)' | head -1", url)
+        local title = vim.fn.system(cmd):gsub('\n', '')
+        if title == '' then
+          title = url
+        end
+        local link = string.format('[%s](%s)', title, url)
+        vim.api.nvim_put({ link }, 'c', true, true)
+      else
+        vim.api.nvim_put({ url }, 'c', true, true)
+      end
+    end
+
     -- Set up keymaps
     vim.keymap.set('n', '<leader> ', search_by_alias, { desc = 'Search Obsidian (Alias & Filename)' })
     vim.keymap.set('n', '<leader>od', '<cmd>Obsidian today<cr>', { desc = '[O]bsidian [D]aily note (today)' })
     vim.keymap.set('n', '<leader>ow', open_weekly_note, { desc = '[O]bsidian [W]eekly note' })
     vim.keymap.set('n', '<leader>ot', insert_today_link, { desc = '[O]bsidian insert [T]oday link' })
+    vim.keymap.set('n', '<leader>op', paste_url_as_markdown_link, { desc = '[O]bsidian [P]aste URL as link' })
   end,
+  },
 }
