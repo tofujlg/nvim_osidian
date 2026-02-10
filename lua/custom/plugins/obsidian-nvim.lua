@@ -1,3 +1,5 @@
+local vault_path = vim.fn.expand '~/docs/Obsidian_vault'
+
 return {
   {
     'saghen/blink.cmp',
@@ -50,7 +52,7 @@ return {
     workspaces = {
       {
         name = 'main',
-        path = '~/Documents/obsidian_git/Obsidian_vault/',
+        path = vault_path,
       },
     },
     daily_notes = {
@@ -96,7 +98,7 @@ return {
   config = function(_, opts)
     require('obsidian').setup(opts)
 
-    local vault_path = vim.fn.expand '~/Documents/obsidian_git/Obsidian_vault/'
+    local vault_root = vault_path .. '/'
 
     -- Custom function to search by alias and filename
     local function search_by_alias()
@@ -109,11 +111,11 @@ return {
       -- Collect all files with their aliases
       local entries = {}
       local scandir = require 'plenary.scandir'
-      local files = scandir.scan_dir(vault_path, { hidden = false, depth = 10, add_dirs = false })
+      local files = scandir.scan_dir(vault_root, { hidden = false, depth = 10, add_dirs = false })
 
       for _, file in ipairs(files) do
         if file:match '%.md$' then
-          local rel_path = file:gsub(vault_path, '')
+          local rel_path = file:gsub(vault_root, '')
           local filename = vim.fn.fnamemodify(file, ':t:r')
 
           -- Always add an entry for the filename
@@ -258,7 +260,14 @@ return {
     -- Open weekly note
     local function open_weekly_note()
       local filename = os.date 'Week-%V-%Y'
-      local filepath = vault_path .. 'Journals/Weekly notes/' .. filename .. '.md'
+      local filepath = vault_root .. 'Journals/Weekly notes/' .. filename .. '.md'
+      vim.cmd('edit ' .. vim.fn.fnameescape(filepath))
+    end
+
+    -- Open monthly note
+    local function open_monthly_note()
+      local filename = os.date '%B-%Y'
+      local filepath = vault_root .. 'Journals/' .. filename .. '.md'
       vim.cmd('edit ' .. vim.fn.fnameescape(filepath))
     end
 
@@ -290,8 +299,13 @@ return {
     vim.keymap.set('n', '<leader> ', search_by_alias, { desc = 'Search Obsidian (Alias & Filename)' })
     vim.keymap.set('n', '<leader>od', '<cmd>Obsidian today<cr>', { desc = '[O]bsidian [D]aily note (today)' })
     vim.keymap.set('n', '<leader>ow', open_weekly_note, { desc = '[O]bsidian [W]eekly note' })
+    vim.keymap.set('n', '<leader>om', open_monthly_note, { desc = '[O]bsidian [M]onthly note' })
     vim.keymap.set('n', '<leader>ot', insert_today_link, { desc = '[O]bsidian insert [T]oday link' })
     vim.keymap.set('n', '<leader>op', paste_url_as_markdown_link, { desc = '[O]bsidian [P]aste URL as link' })
+
+    vim.api.nvim_create_user_command('ObsidianMonthly', open_monthly_note, {
+      desc = 'Open Obsidian monthly note',
+    })
   end,
   },
 }
