@@ -2,28 +2,6 @@ local vault_path = vim.fn.expand '~/docs/Obsidian_vault'
 
 return {
   {
-    'saghen/blink.cmp',
-    version = false,
-    dependencies = {
-      { 'rafamadriz/friendly-snippets' },
-    },
-    opts = {
-      keymap = { preset = 'enter' },
-      completion = { list = { selection = { preselect = true, auto_insert = true } } },
-      appearance = {
-        use_nvim_cmp_as_default = true,
-        nerd_font_variant = 'mono',
-      },
-      sources = {
-        default = { 'lsp', 'path', 'snippets', 'buffer' },
-        per_filetype = {
-          markdown = { inherit_defaults = true, 'obsidian', 'obsidian_new', 'obsidian_tags' },
-        },
-      },
-    },
-    opts_extend = { 'sources.default' },
-  },
-  {
     'obsidian-nvim/obsidian.nvim',
     version = '*', -- use latest release, remove to use latest commit
     ft = 'markdown',
@@ -38,7 +16,7 @@ return {
     legacy_commands = false, -- this will be removed in the next major release
     completion = {
       blink = true,
-      min_chars = 2,
+      min_chars = 0,
     },
     ui = {
       hl_groups = {
@@ -97,6 +75,16 @@ return {
   },
   config = function(_, opts)
     require('obsidian').setup(opts)
+    do
+      local api = require 'obsidian.api'
+      local original_resolve_workspace_dir = api.resolve_workspace_dir
+      api.resolve_workspace_dir = function()
+        if vim.in_fast_event() then
+          return Obsidian.workspace.root
+        end
+        return original_resolve_workspace_dir()
+      end
+    end
 
     local vault_root = vault_path .. '/'
 
